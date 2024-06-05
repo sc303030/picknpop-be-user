@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from rest_framework.permissions import AllowAny
 
-# Create your views here.
+from .serializers import SignUpSerializer
+from .models import User
+
+
+class SignUpViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = SignUpSerializer
+    permission_classes = [AllowAny]
