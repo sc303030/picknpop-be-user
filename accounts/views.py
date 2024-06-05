@@ -1,8 +1,10 @@
+from django.contrib.auth import get_user_model
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 
 from .serializers import SignUpSerializer
-from .models import User
+
+User = get_user_model()
 
 
 class SignUpViewSet(viewsets.ModelViewSet):
