@@ -31,6 +31,43 @@ def test_register_user(api_client):
 
 
 @pytest.mark.django_db
+def test_login_user(api_client):
+    User.objects.create_user(
+        username="testuser",
+        nickname="testnickname",
+        password="testpassword",
+        email="test@example.com",
+    )
+    url = reverse("token_obtain_pair")
+    data = {"username": "testuser", "password": "testpassword"}
+    response = api_client.post(url, data, format="json")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert "access" in response.data
+    assert "refresh" in response.data
+
+
+@pytest.mark.django_db
+def test_refresh_token(api_client):
+    User.objects.create_user(
+        username="testuser",
+        nickname="testnickname",
+        password="testpassword",
+        email="test@example.com",
+    )
+    login_url = reverse("token_obtain_pair")
+    login_data = {"username": "testuser", "password": "testpassword"}
+    login_response = api_client.post(login_url, login_data, format="json")
+
+    refresh_url = reverse("token_refresh")
+    refresh_data = {"refresh": login_response.data["refresh"]}
+    refresh_response = api_client.post(refresh_url, refresh_data, format="json")
+
+    assert refresh_response.status_code == status.HTTP_200_OK
+    assert "access" in refresh_response.data
+
+
+@pytest.mark.django_db
 def test_register_user_with_existing_nickname(api_client):
     User.objects.create_user(
         username="existinguser",
