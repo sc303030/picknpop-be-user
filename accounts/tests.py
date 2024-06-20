@@ -16,30 +16,23 @@ def api_client():
 def test_register_user(api_client):
     url = reverse("sign-up-list")
     data = {
-        "username": "testuser",
         "nickname": "testnickname",
         "password": "testpassword",
         "email": "test@example.com",
-        "first_name": "Test",
-        "last_name": "User",
     }
     response = api_client.post(url, data, format="json")
-
     assert response.status_code == status.HTTP_201_CREATED
     assert User.objects.count() == 1
-    assert User.objects.get().username == "testuser"
+    assert User.objects.get().email == "test@example.com"
 
 
 @pytest.mark.django_db
 def test_login_user(api_client):
     User.objects.create_user(
-        username="testuser",
-        nickname="testnickname",
-        password="testpassword",
-        email="test@example.com",
+        nickname="testnickname", password="testpassword", email="test@example.com"
     )
     url = reverse("token_obtain_pair")
-    data = {"username": "testuser", "password": "testpassword"}
+    data = {"email": "test@example.com", "password": "testpassword"}
     response = api_client.post(url, data, format="json")
 
     assert response.status_code == status.HTTP_200_OK
@@ -50,13 +43,12 @@ def test_login_user(api_client):
 @pytest.mark.django_db
 def test_refresh_token(api_client):
     User.objects.create_user(
-        username="testuser",
         nickname="testnickname",
         password="testpassword",
         email="test@example.com",
     )
     login_url = reverse("token_obtain_pair")
-    login_data = {"username": "testuser", "password": "testpassword"}
+    login_data = {"email": "test@example.com", "password": "testpassword"}
     login_response = api_client.post(login_url, login_data, format="json")
 
     refresh_url = reverse("token_refresh")
@@ -70,19 +62,15 @@ def test_refresh_token(api_client):
 @pytest.mark.django_db
 def test_register_user_with_existing_nickname(api_client):
     User.objects.create_user(
-        username="existinguser",
         nickname="testnickname",
         password="password",
         email="existing@example.com",
     )
     url = reverse("sign-up-list")
     data = {
-        "username": "newuser",
         "nickname": "testnickname",
         "password": "newpassword",
         "email": "new@example.com",
-        "first_name": "New",
-        "last_name": "User",
     }
     response = api_client.post(url, data, format="json")
 
@@ -95,12 +83,9 @@ def test_register_user_with_existing_nickname(api_client):
 def test_register_user_with_missing_fields(api_client):
     url = reverse("sign-up-list")
     data = {
-        "username": "",
         "nickname": "",
         "password": "",
         "email": "",
-        "first_name": "",
-        "last_name": "",
     }
     response = api_client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
