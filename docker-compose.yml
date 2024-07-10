@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    env_file:
+      - test.env
+    ports:
+      - "5433:5432"
+    networks:
+      - mynetwork
+
+  django:
+    image: lkh6035/picknpop-be-user
+    env_file:
+      - test.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - mynetwork
+    restart: always
+    entrypoint: >
+      sh -c "
+      python manage.py migrate &&
+      exec python manage.py runserver 0.0.0.0:8000
+      "
+  fastapi:
+    image: lkh6035/picknpop-be
+    env_file:
+      - test.env
+    ports:
+      - "18000:18000"
+    depends_on:
+      - db
+      - django
+    networks:
+      - mynetwork
+    restart: always
+    command: [ "uvicorn", "app.main:apps", "--host", "0.0.0.0", "--port", "18000" ]
+  next-js:
+    image: lkh6035/picknpop-fe
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - django
+      - fastapi
+    networks:
+      - mynetwork
+    restart: always
+    environment:
+      NEXT_PUBLIC_USER_API_URL: django
+      NEXT_PUBLIC_POST_API_URL: fastapi
+    command: [ "yarn", "start" ]
+networks:
+  mynetwork:
