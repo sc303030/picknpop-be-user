@@ -28,7 +28,8 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+allowed_hosts = env("ALLOWED_HOSTS", default="").split(",")
+ALLOWED_HOSTS = allowed_hosts
 
 
 # Application definition
