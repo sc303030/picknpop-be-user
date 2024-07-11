@@ -6,12 +6,12 @@ services:
     env_file:
       - test.env
     ports:
-      - "5433:5432"
+      - "5432:5432"
     networks:
       - mynetwork
 
   django:
-    image: lkh6035/picknpop-be-user
+    image: lkh6035/picknpop-be-user:v0.1.1
     env_file:
       - test.env
     ports:
@@ -27,7 +27,7 @@ services:
       exec python manage.py runserver 0.0.0.0:8000
       "
   fastapi:
-    image: lkh6035/picknpop-be
+    image: lkh6035/picknpop-be:v0.1.1
     env_file:
       - test.env
     ports:
@@ -40,7 +40,7 @@ services:
     restart: always
     command: [ "uvicorn", "app.main:apps", "--host", "0.0.0.0", "--port", "18000" ]
   next-js:
-    image: lkh6035/picknpop-fe
+    image: lkh6035/picknpop-fe:v0.1.1
     ports:
       - "3000:3000"
     depends_on:
