@@ -170,6 +170,5 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 # cors
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+cors_allowed_origins = env("CORS_ALLOWED_ORIGINS", default="").split(",")
+CORS_ALLOWED_ORIGINS = cors_allowed_origins
