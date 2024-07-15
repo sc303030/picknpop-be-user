@@ -17,12 +17,15 @@ class BaseModel(models.Model):
 class Post(BaseModel):
     title = models.CharField(max_length=255)
     content = models.TextField()
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts"
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="my_post_set", on_delete=models.CASCADE
     )
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        ordering = ["-id"]
 
 
 class Comment(BaseModel):

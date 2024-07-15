@@ -2,6 +2,8 @@ venv
 .idea
 *.env
 db.*
-*/__pycache__/
+__pycache__
+*.pyc
+*.pyo
 */migrations/*
 !*/migrations/__init__.py

@@ -18,21 +18,21 @@ def test_register_user(api_client):
     data = {
         "nickname": "testnickname",
         "password": "testpassword",
-        "email": "test@example.com",
+        "username": "test@example.com",
     }
     response = api_client.post(url, data, format="json")
     assert response.status_code == status.HTTP_201_CREATED
     assert User.objects.count() == 1
-    assert User.objects.get().email == "test@example.com"
+    assert User.objects.get().username == "test@example.com"
 
 
 @pytest.mark.django_db
 def test_login_user(api_client):
     User.objects.create_user(
-        nickname="testnickname", password="testpassword", email="test@example.com"
+        nickname="testnickname", password="testpassword", username="test@example.com"
     )
     url = reverse("token_obtain_pair")
-    data = {"email": "test@example.com", "password": "testpassword"}
+    data = {"username": "test@example.com", "password": "testpassword"}
     response = api_client.post(url, data, format="json")
 
     assert response.status_code == status.HTTP_200_OK
@@ -45,10 +45,10 @@ def test_refresh_token(api_client):
     User.objects.create_user(
         nickname="testnickname",
         password="testpassword",
-        email="test@example.com",
+        username="test@example.com",
     )
     login_url = reverse("token_obtain_pair")
-    login_data = {"email": "test@example.com", "password": "testpassword"}
+    login_data = {"username": "test@example.com", "password": "testpassword"}
     login_response = api_client.post(login_url, login_data, format="json")
 
     refresh_url = reverse("token_refresh")
@@ -64,13 +64,13 @@ def test_register_user_with_existing_nickname(api_client):
     User.objects.create_user(
         nickname="testnickname",
         password="password",
-        email="existing@example.com",
+        username="existing@example.com",
     )
     url = reverse("sign-up-list")
     data = {
         "nickname": "testnickname",
         "password": "newpassword",
-        "email": "new@example.com",
+        "username": "new@example.com",
     }
     response = api_client.post(url, data, format="json")
 
@@ -85,7 +85,7 @@ def test_register_user_with_missing_fields(api_client):
     data = {
         "nickname": "",
         "password": "",
-        "email": "",
+        "username": "",
     }
     response = api_client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
