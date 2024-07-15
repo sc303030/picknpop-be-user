@@ -1,17 +1,20 @@
 version: '3.8'
-
+volumes:
+  postgres_db_dev: {}
 services:
   db:
     image: postgres
     env_file:
       - test.env
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    volumes:
+      - postgres_db_dev:/var/lib/postgresql/data
     networks:
       - mynetwork
 
   django:
-    image: lkh6035/picknpop-be-user:v0.1.1
+    image: lkh6035/picknpop-be-user:v0.1.8
     env_file:
       - test.env
     ports:
@@ -21,13 +24,15 @@ services:
     networks:
       - mynetwork
     restart: always
-    entrypoint: >
-      sh -c "
-      python manage.py migrate &&
-      exec python manage.py runserver 0.0.0.0:8000
-      "
+    command:
+      - bash
+      - -c
+      - |
+        ./wait-for-it.sh db:5432 -t 20 -- echo "picknpop is up"
+        python manage.py migrate
+        python manage.py runserver 0.0.0.0:8000
   fastapi:
-    image: lkh6035/picknpop-be:v0.1.1
+    image: lkh6035/picknpop-be:v0.1.5
     env_file:
       - test.env
     ports:
@@ -38,9 +43,14 @@ services:
     networks:
       - mynetwork
     restart: always
-    command: [ "uvicorn", "app.main:apps", "--host", "0.0.0.0", "--port", "18000" ]
+    command:
+      - bash
+      - -c
+      - |
+        ./wait-for-it.sh db:5432 -t 20 -- echo "picknpop is up"
+        uvicorn app.main:apps --host 0.0.0.0 --port 18000
   next-js:
-    image: lkh6035/picknpop-fe:v0.1.1
+    image: lkh6035/picknpop-fe:v0.1.7-local
     ports:
       - "3000:3000"
     depends_on:
@@ -50,9 +60,6 @@ services:
     networks:
       - mynetwork
     restart: always
-    environment:
-      NEXT_PUBLIC_USER_API_URL: django
-      NEXT_PUBLIC_POST_API_URL: fastapi
-    command: [ "yarn", "start" ]
+    command: ["yarn", "start", "-H", "0.0.0.0"]
 networks:
   mynetwork:
