@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import environ, os
 from datetime import timedelta
+import collections
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,6 +32,8 @@ DEBUG = True
 allowed_hosts = env("ALLOWED_HOSTS", default="").split(",")
 ALLOWED_HOSTS = allowed_hosts
 
+if not hasattr(collections, "Callable"):
+    collections.Callable = collections.abc.Callable
 
 # Application definition
 
@@ -45,6 +48,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     # third
+    "django_pydenticon",
     "corsheaders",
     # apps
     "accounts",
@@ -133,7 +137,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
