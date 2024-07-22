@@ -2,6 +2,7 @@ venv
 .idea
 *.env
 db.*
+!media/team_emblems/KBL/db.png
 __pycache__
 *.pyc
 *.pyo
