@@ -15,6 +15,11 @@ class Command(BaseCommand):
 
         teams = [
             {
+                "name": "KBL",
+                "league": Team.LeagueChoices.KBL,
+                "emblem": f"{EMBLEM_URL}/kbl.png",
+            },
+            {
                 "name": "서울 SK",
                 "league": Team.LeagueChoices.KBL,
                 "emblem": f"{EMBLEM_URL}/sk.png",
@@ -27,7 +32,7 @@ class Command(BaseCommand):
             {
                 "name": "대구 한국가스공사",
                 "league": Team.LeagueChoices.KBL,
-                "emblem": f"{EMBLEM_URL}/kgs.png",
+                "emblem": f"{EMBLEM_URL}/gas.png",
             },
             {
                 "name": "부산 KCC",
