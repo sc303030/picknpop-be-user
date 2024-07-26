@@ -30,6 +30,6 @@ class SignUpSerializer(serializers.ModelSerializer):
         )
         # 기본 avatar URL 설정
         if "avatar" not in validated_data:
-            user.avatar = f"http://localhost:8000/identicon/image/{user.nickname}.png"
+            user.avatar = f"/identicon/image/{user.nickname}.png"
         user.save()
         return user

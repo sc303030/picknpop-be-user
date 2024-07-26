@@ -107,4 +107,4 @@ def test_user_registration_with_default_avatar(api_client):
 
     user = User.objects.get(username="testuser")
     assert user.nickname == "testnickname"
-    assert user.avatar == "http://localhost:8000/identicon/image/testnickname.png"
+    assert user.avatar == "/identicon/image/testnickname.png"
