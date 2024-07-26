@@ -10,7 +10,7 @@ class SignUpSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("username", "nickname", "password")
+        fields = ("username", "nickname", "password", "avatar")
 
     def validate_nickname(self, value):
         if User.objects.filter(nickname=value).exists():
@@ -28,4 +28,8 @@ class SignUpSerializer(serializers.ModelSerializer):
             password=validated_data["password"],
             username=validated_data["username"],
         )
+        # 기본 avatar URL 설정
+        if "avatar" not in validated_data:
+            user.avatar = f"http://localhost:8000/identicon/image/{user.nickname}.png"
+        user.save()
         return user

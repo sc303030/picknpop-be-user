@@ -5,14 +5,25 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from .models import Post, Comment
+from .models import Post, Comment, Team
 
 User = get_user_model()
 
 
 @pytest.fixture
 def user():
-    return User.objects.create_user(email="testuser@test.com", password="testpassword")
+    return User.objects.create_user(
+        username="testuser@test.com", email="testuser@test.com", password="testpassword"
+    )
+
+
+@pytest.fixture
+def team():
+    return Team.objects.create(
+        name="서울 삼성",
+        league=Team.LeagueChoices.KBL,
+        emblem=None,
+    )
 
 
 @pytest.fixture
@@ -21,22 +32,28 @@ def api_client():
 
 
 @pytest.mark.django_db
-def test_create_post(user):
-    post_data = {"title": "Test Title", "content": "Test Content", "owner": user}
+def test_create_post(user, team):
+    post_data = {
+        "title": "Test Title",
+        "content": "Test Content",
+        "author": user,
+        "team": team,
+    }
     post = Post.objects.create(**post_data)
 
     assert Post.objects.count() == 1
     assert Post.objects.first().title == "Test Title"
     assert Post.objects.first().content == "Test Content"
-    assert Post.objects.first().owner == user
+    assert Post.objects.first().author == user
 
 
 @pytest.mark.django_db
-def test_add_comment_to_post(api_client, user):
-    api_client.login(email="testuser@test.com", password="testpassword")
+def test_add_comment_to_post(api_client, user, team):
+    api_client.login(username="testuser@test.com", password="testpassword")
 
-    post = Post.objects.create(title="Test Post", content="Test Content", owner=user)
-
+    post = Post.objects.create(
+        title="Test Post", content="Test Content", author=user, team=team
+    )
     comment = Comment.objects.create(author=user, post=post, message="Test Comment")
 
     assert Comment.objects.count() == 1
