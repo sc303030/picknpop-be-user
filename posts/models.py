@@ -35,6 +35,23 @@ class Team(BaseModel):
         ordering = ["-name"]
 
 
+class EmotionType(BaseModel):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Emotion(BaseModel):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    post = models.ForeignKey("Post", related_name="emotions", on_delete=models.CASCADE)
+    emotion_type = models.ForeignKey(EmotionType, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("user", "post", "emotion_type")
+
+
 class Post(BaseModel):
     title = models.CharField(max_length=255)
     content = models.TextField()
@@ -48,6 +65,9 @@ class Post(BaseModel):
 
     class Meta:
         ordering = ["-id"]
+
+    def get_emotion_count(self, emotion_name):
+        return self.emotions.filter(emotion_type__name=emotion_name).count()
 
 
 class Comment(BaseModel):
