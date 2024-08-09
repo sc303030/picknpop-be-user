@@ -72,8 +72,9 @@ class Command(BaseCommand):
         ]
 
         for team in teams:
-            Team.objects.create(
-                name=team["name"], league=team["league"], emblem=team["emblem"]
+            Team.objects.get_or_create(
+                name=team["name"],
+                defaults={"league": team["league"], "emblem": team["emblem"]},
             )
 
         print("Teams inserted successfully!")
