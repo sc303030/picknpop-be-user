@@ -45,7 +45,13 @@ class EmotionType(BaseModel):
 
 class Emotion(BaseModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    post = models.ForeignKey("Post", related_name="emotions", on_delete=models.CASCADE)
+    post = models.ForeignKey(
+        "Post",
+        related_name="emotions",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     emotion_type = models.ForeignKey(EmotionType, on_delete=models.CASCADE)
 
     class Meta:
