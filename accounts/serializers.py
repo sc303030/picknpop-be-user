@@ -28,8 +28,4 @@ class SignUpSerializer(serializers.ModelSerializer):
             password=validated_data["password"],
             username=validated_data["username"],
         )
-        # 기본 avatar URL 설정
-        if "avatar" not in validated_data:
-            user.avatar = f"/identicon/image/{user.nickname}.png"
-        user.save()
         return user
