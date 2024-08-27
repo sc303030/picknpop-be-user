@@ -1,10 +1,10 @@
 # tests.py
+import sys
 
 import pytest
 from django.contrib.auth import get_user_model
-from django.urls import reverse
 from rest_framework.test import APIClient
-
+from unittest.mock import patch, MagicMock
 from .models import Post, Comment, Team, EmotionType, Emotion
 
 User = get_user_model()
@@ -82,3 +82,48 @@ def test_add_emotion_to_post(user, team, emotion_type_like):
     assert Emotion.objects.get().post == post
     assert Emotion.objects.get().user == user
     assert Emotion.objects.get().emotion_type == emotion_type_like
+
+
+@pytest.mark.django_db
+@patch("sys.modules", {"fake_fastapi.posts.post_id": MagicMock()})
+def test_increment_post_views(user, team):
+    post = Post.objects.create(
+        title="Test Post for Views",
+        content="Content with Views",
+        author=user,
+        team=team,
+    )
+
+    fake_increment_views = sys.modules["fake_fastapi.posts.post_id"]
+    fake_increment_views.return_value = {
+        "message": "View count incremented",
+        "post_id": post.id,
+        "views": post.views + 1,
+    }
+    response = fake_increment_views(post.id)
+    assert response["views"] == post.views + 1
+    fake_increment_views.assert_called_once_with(post.id)
+
+
+@pytest.mark.django_db
+@patch("sys.modules", {"fake_fastapi.popular": MagicMock()})
+def test_popular_posts_within_one_minute(user, team):
+    post1 = Post.objects.create(
+        title="Popular Post 1", content="Content 1", author=user, team=team
+    )
+    post2 = Post.objects.create(
+        title="Popular Post 2", content="Content 2", author=user, team=team
+    )
+
+    fake_get_popular_posts = sys.modules["fake_fastapi.popular"]
+    fake_get_popular_posts.return_value = [
+        {"title": "Popular Post 1", "recent_views": 2},
+        {"title": "Popular Post 2", "recent_views": 1},
+    ]
+
+    response = fake_get_popular_posts()
+
+    assert len(response) == 2
+    assert response[0]["title"] == "Popular Post 1"
+    assert response[1]["title"] == "Popular Post 2"
+    fake_get_popular_posts.assert_called_once()

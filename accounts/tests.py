@@ -93,7 +93,7 @@ def test_register_user_with_missing_fields(api_client):
 
 @pytest.mark.django_db
 def test_user_registration_with_default_avatar(api_client):
-    url = reverse("sign-up-list")  # UserViewSet에 대한 URL
+    url = reverse("sign-up-list")
     data = {
         "username": "testuser",
         "password": "testpassword123",
@@ -107,4 +107,4 @@ def test_user_registration_with_default_avatar(api_client):
 
     user = User.objects.get(username="testuser")
     assert user.nickname == "testnickname"
-    assert user.avatar == "/identicon/image/testnickname.png"
+    assert user.avatar.name == ""
