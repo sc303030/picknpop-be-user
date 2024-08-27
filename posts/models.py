@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
-
+from django.utils import timezone
+from django.db.models import Count
+from datetime import timedelta
 
 User = get_user_model()
 
@@ -65,6 +67,7 @@ class Post(BaseModel):
         settings.AUTH_USER_MODEL, related_name="my_post_set", on_delete=models.CASCADE
     )
     team = models.ForeignKey(Team, related_name="team_posts", on_delete=models.CASCADE)
+    views = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -72,8 +75,10 @@ class Post(BaseModel):
     class Meta:
         ordering = ["-id"]
 
-    def get_emotion_count(self, emotion_name):
-        return self.emotions.filter(emotion_type__name=emotion_name).count()
+
+class PostViewLog(models.Model):
+    post = models.ForeignKey(Post, related_name="view_logs", on_delete=models.CASCADE)
+    viewed_at = models.DateTimeField(auto_now_add=True)
 
 
 class Comment(BaseModel):
