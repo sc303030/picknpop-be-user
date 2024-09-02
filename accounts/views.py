@@ -1,11 +1,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework import viewsets
-from rest_framework.permissions import AllowAny
+from rest_framework.exceptions import NotFound
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.response import Response
-from rest_framework import status
-from .serializers import SignUpSerializer
+from .serializers import SignUpSerializer, ProfileSerializer
 
 User = get_user_model()
 
@@ -25,3 +23,21 @@ class MyTokenObtainPairView(TokenObtainPairView):
             response.data["refresh_token"] = refresh
             response.data["access_token"] = access
         return response
+
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.kwargs.get("pk")
+        if user_id is not None:
+            queryset = User.objects.filter(id=user_id)
+            if not queryset.exists():
+                raise NotFound(f"User with id {user_id} not found.")
+            return queryset
+        return super().get_queryset()
+
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)

@@ -29,3 +29,11 @@ class SignUpSerializer(serializers.ModelSerializer):
             username=validated_data["username"],
         )
         return user
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    nickname = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ("id", "nickname", "avatar")
