@@ -66,7 +66,7 @@ class Post(BaseModel):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="my_post_set", on_delete=models.CASCADE
     )
-    team = models.ForeignKey(Team, related_name="team_posts", on_delete=models.CASCADE)
+    teams = models.ManyToManyField(Team, related_name="team_posts")
     views = models.PositiveIntegerField(default=0)
 
     def __str__(self):
