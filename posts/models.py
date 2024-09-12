@@ -68,6 +68,7 @@ class Post(BaseModel):
     )
     teams = models.ManyToManyField(Team, related_name="team_posts")
     views = models.PositiveIntegerField(default=0)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
