@@ -32,8 +32,54 @@ class SignUpSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    nickname = serializers.CharField(read_only=True)
+    nickname = serializers.CharField(required=False)
+    avatar = serializers.ImageField(required=False)
+    old_password = serializers.CharField(required=False, write_only=True)
+    new_password = serializers.CharField(required=False, write_only=True)
+    new_password_confirm = serializers.CharField(required=False, write_only=True)
 
     class Meta:
         model = User
-        fields = ("id", "nickname", "avatar")
+        fields = (
+            "username",
+            "nickname",
+            "avatar",
+            "old_password",
+            "new_password",
+            "new_password_confirm",
+        )
+        extra_kwargs = {
+            "username": {"read_only": True},
+        }
+
+    def validate(self, attrs):
+        user = self.context["request"].user
+        old_password = attrs.get("old_password")
+        new_password = attrs.get("new_password")
+        new_password_confirm = attrs.get("new_password_confirm")
+
+        if old_password or new_password or new_password_confirm:
+            if not user.check_password(old_password):
+                raise serializers.ValidationError(
+                    {"old_password": _("현재 비밀번호가 일치하지 않습니다.")}
+                )
+
+            if new_password != new_password_confirm:
+                raise serializers.ValidationError(
+                    {"new_password_confirm": _("새로운 비밀번호가 일치하지 않습니다.")}
+                )
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        if "nickname" in validated_data:
+            instance.nickname = validated_data["nickname"]
+
+        if "avatar" in validated_data:
+            instance.avatar = validated_data["avatar"]
+
+        if "new_password" in validated_data:
+            instance.set_password(validated_data["new_password"])
+
+        instance.save()
+        return instance
