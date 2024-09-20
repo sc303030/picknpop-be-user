@@ -8,3 +8,7 @@ pytest-django==4.8.0
 djangorestframework-simplejwt==5.3.1
 psycopg2-binary==2.9.9
 django-cors-headers==4.4.0
+django-allauth==64.2.1
+dj-rest-auth==6.0.0
+django-imagekit==5.0.0
+requests==2.32.3
