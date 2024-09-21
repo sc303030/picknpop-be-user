@@ -3,6 +3,6 @@ venv
 *.env
 db.*
 !media/team_emblems/KBL/db.png
-__pycache__
+*__pycache__
 *.pyc
 *.pyo
