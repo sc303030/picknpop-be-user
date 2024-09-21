@@ -1,18 +1,24 @@
-from django.urls import path, include
+from dj_rest_auth.registration.views import VerifyEmailView
+from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
-from .views import SignUpViewSet, MyTokenObtainPairView, ProfileViewSet
-from rest_framework_simplejwt.views import (
-    TokenRefreshView,
-    TokenVerifyView,
-)
+
+from accounts.views import ConfirmEmailView, success
 
 router = DefaultRouter()
-router.register(r"sign-up", SignUpViewSet, basename="sign-up")
-router.register(r"profile", ProfileViewSet, basename="profile")
 
 urlpatterns = [
-    path("sign-in/", MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("verify/", TokenVerifyView.as_view(), name="token_verify"),
-    path("", include(router.urls)),
+    path("", include("dj_rest_auth.urls")),
+    path("registration/", include("dj_rest_auth.registration.urls")),
+    path("allauth/", include("allauth.urls")),
+    re_path(
+        r"^account-confirm-email/$",
+        VerifyEmailView.as_view(),
+        name="account_email_verification_sent",
+    ),
+    re_path(
+        r"^account-confirm-email/(?P<key>[-:\w]+)/$",
+        ConfirmEmailView.as_view(),
+        name="account_confirm_email",
+    ),
+    path("success/", success, name="success"),
 ]
