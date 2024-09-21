@@ -26,7 +26,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, "dev.env"))
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
 allowed_hosts = env("ALLOWED_HOSTS", default="").split(",")
 ALLOWED_HOSTS = allowed_hosts
