@@ -177,6 +177,7 @@ REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
     "REGISTER_SERIALIZER": "accounts.serializers.CustomRegisterSerializer",
+    "USER_DETAILS_SERIALIZER": "accounts.serializers.CustomUserDetailsSerializer",
 }
 
 SIMPLE_JWT = {

@@ -1,8 +1,12 @@
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from dj_rest_auth.serializers import LoginSerializer
+from dj_rest_auth.serializers import LoginSerializer, UserDetailsSerializer
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
 from accounts.models import User
+
+
+User = get_user_model()
 
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -25,3 +29,14 @@ class CustomRegisterSerializer(RegisterSerializer):
         if nickname:
             user.nickname = nickname
             user.save()
+
+
+class CustomUserDetailsSerializer(UserDetailsSerializer):
+    class Meta(UserDetailsSerializer.Meta):
+        model = User
+        fields = ("username", "nickname")
+
+    def update(self, instance, validated_data):
+        instance.nickname = validated_data.get("nickname", instance.nickname)
+        instance.save()
+        return instance
