@@ -37,6 +37,12 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
         fields = ("username", "nickname")
 
     def update(self, instance, validated_data):
-        instance.nickname = validated_data.get("nickname", instance.nickname)
+        new_nickname = validated_data.get("nickname", instance.nickname)
+        if User.objects.filter(nickname=new_nickname).exclude(id=instance.id).exists():
+            raise serializers.ValidationError(
+                {"nickname": "이미 존재하는 닉네임입니다."}
+            )
+
+        instance.nickname = new_nickname
         instance.save()
         return instance
