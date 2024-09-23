@@ -167,9 +167,7 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = "username"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = "username"
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+ACCOUNT_EMAIL_VERIFICATION = "none"
 
 # dj-rest-auth config, https://dj-rest-auth.readthedocs.io/en/latest/configuration.html
 REST_AUTH = {
@@ -188,16 +186,3 @@ SIMPLE_JWT = {
 # cors
 cors_allowed_origins = env("CORS_ALLOWED_ORIGINS", default="").split(",")
 CORS_ALLOWED_ORIGINS = cors_allowed_origins
-
-
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = env("EMAIL_PORT", default="587")
-
-EMAIL_HOST_USER = env("EMAIL")
-EMAIL_HOST_PASSWORD = env("EMAIL_PASSWORD")
-
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
-ACCOUNT_EMAIL_SUBJECT_PREFIX = "[이메일 인증] "
