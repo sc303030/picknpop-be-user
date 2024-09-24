@@ -27,22 +27,18 @@ class CustomLoginView(LoginView):
         username = request.data.get("username", None)
         password = request.data.get("password", None)
 
-        if not username or not password:
-            return Response(
-                {"detail": "아이디와 비밀번호를 모두 입력해주세요."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             return Response(
-                {"detail": "해당 아이디를 찾을 수 없습니다."},
+                {"username": "해당 아이디를 찾을 수 없습니다."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user = authenticate(request, username=username, password=password)
         if user is None:
             return Response(
-                {"detail": "비밀번호가 틀렸습니다."}, status=status.HTTP_400_BAD_REQUEST
+                {"password": "비밀번호가 틀렸습니다."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         response = super().post(request, *args, **kwargs)
