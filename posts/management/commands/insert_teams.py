@@ -11,7 +11,10 @@ class Command(BaseCommand):
     help = "KBL 리그팀을 생성합니다."
 
     def handle(self, *args, **options):
-        EMBLEM_URL = "media/team_emblems/KBL"
+        if settings.DEBUG:
+            EMBLEM_URL = "media/team_emblems/KBL"
+        else:
+            EMBLEM_URL = "team_emblems/KBL"
 
         teams = [
             {
