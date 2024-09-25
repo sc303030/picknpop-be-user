@@ -1,6 +1,7 @@
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.serializers import UserDetailsSerializer
 from django.contrib.auth import get_user_model
+from django.core.validators import RegexValidator
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
 from accounts.models import User
@@ -10,7 +11,17 @@ User = get_user_model()
 
 
 class CustomRegisterSerializer(RegisterSerializer):
-    nickname = serializers.CharField(max_length=20, write_only=True, required=True)
+    nickname = serializers.CharField(
+        max_length=20,
+        write_only=True,
+        required=True,
+        validators=[
+            RegexValidator(
+                regex=r"^[가-힣a-zA-Z0-9]+$",
+                message="문자와 숫자만 가능합니다.",
+            )
+        ],
+    )
     username = serializers.EmailField(required=True)
     email = serializers.EmailField(read_only=True)
 
@@ -32,6 +43,17 @@ class CustomRegisterSerializer(RegisterSerializer):
 
 
 class CustomUserDetailsSerializer(UserDetailsSerializer):
+    nickname = serializers.CharField(
+        max_length=20,
+        required=True,
+        validators=[
+            RegexValidator(
+                regex=r"^[가-힣a-zA-Z0-9]+$",
+                message="문자와 숫자만 가능합니다.",
+            )
+        ],
+    )
+
     class Meta(UserDetailsSerializer.Meta):
         model = User
         fields = ("username", "nickname")
