@@ -12,3 +12,4 @@ django-allauth==64.2.1
 dj-rest-auth==6.0.0
 django-imagekit==5.0.0
 requests==2.32.3
+gunicorn==23.0.0
