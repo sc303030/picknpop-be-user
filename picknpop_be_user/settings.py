@@ -187,3 +187,4 @@ SIMPLE_JWT = {
 # cors
 cors_allowed_origins = env("CORS_ALLOWED_ORIGINS", default="").split(",")
 CORS_ALLOWED_ORIGINS = cors_allowed_origins
+CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS", default="").split(",")
